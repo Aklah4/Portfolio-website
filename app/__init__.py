@@ -44,7 +44,10 @@ def create_app(config_name="default"):
 
     with app.app_context():
         from . import models  # noqa: F401
-        db.create_all()
+        try:
+            db.create_all()
+        except Exception as e:
+            app.logger.error(f"Database connection failed: {e}")
 
 
 
