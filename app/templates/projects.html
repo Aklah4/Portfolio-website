@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Work — Emmanuel Aklah{% endblock %}
+
+{% block head %}
+<style>
+  .projects-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 9rem 2.5rem 6rem;
+  }
+
+  .page-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 1rem;
+  }
+  .page-heading {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--fg);
+    margin-bottom: 5rem;
+  }
+
+  /* ── Grid ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 900px) {
+    .projects-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ── Card ── */
+  .project-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .project-card:hover {
+    border-color: var(--fg-muted);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  }
+  .card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    flex: 1;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .card-title {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    line-height: 1.15;
+    color: var(--fg);
+    transition: color 0.2s;
+  }
+  .project-card:hover .card-title { color: var(--fg-muted); }
+
+  .card-arrow {
+    font-size: 1rem;
+    color: var(--fg-muted);
+    flex-shrink: 0;
+    transition: transform 0.2s, color 0.2s;
+    margin-top: 0.1rem;
+  }
+  .project-card:hover .card-arrow {
+    transform: translate(3px, -3px);
+    color: var(--fg);
+  }
+
+  .card-description {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--fg-muted);
+    font-weight: 300;
+    flex: 1;
+  }
+
+  .card-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .stack-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+  }
+
+  /* Featured badge */
+  .featured-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+    border-radius: 999px;
+    padding: 0.18rem 0.55rem;
+    white-space: nowrap;
+  }
+
+  /* ── Empty state ── */
+  .empty-state {
+    padding: 5rem 2rem;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .empty-state p {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  /* Entrance */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── Card thumbnail ── */
+  .card-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--border);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .card-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .project-card:hover .card-image img {
+    transform: scale(1.03);
+  }
+  .card-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg-muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.4;
+  }
+
+  @media (max-width: 480px) {
+    .projects-grid { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="projects-page">
+
+  <p class="page-eyebrow">Work</p>
+  <h1 class="page-heading">Selected<br>projects.</h1>
+
+  <div class="fade-up">
+    {% if projects %}
+    <div class="projects-grid">
+      {% for project in projects %}
+      <a href="{{ url_for('main.project_detail', slug=project.slug) }}" class="project-card">
+        <div class="card-image">
+          {% if project.image_url %}
+          <img src="{{ project.image_url }}" alt="{{ project.title }}">
+          {% else %}
+          <div class="card-image-placeholder">No preview</div>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <div class="card-header">
+            <span class="card-title">{{ project.title }}</span>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.4rem;">
+              {% if project.featured %}<span class="featured-badge">Featured</span>{% endif %}
+              <span class="card-arrow">&#8599;</span>
+            </div>
+          </div>
+
+          <p class="card-description">{{ project.description }}</p>
+
+          {% if project.tech_stack %}
+          <div class="card-stack">
+            {% for tech in project.tech_stack %}
+            <span class="stack-tag">{{ tech }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+      <p>No projects yet — check back soon.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+  const obs = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.08 }
+  );
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+{% endblock %}

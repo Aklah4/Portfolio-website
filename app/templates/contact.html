@@ -1,0 +1,364 @@
+{% extends "base.html" %} {% block title %}Contact — Emmanuel Aklah{% endblock
+%} {% block head %}
+<style>
+  .contact-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 9rem 2.5rem 6rem;
+  }
+
+  .page-eyebrow {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 1rem;
+  }
+  .page-heading {
+    font-family: "Barlow", sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--fg);
+    margin-bottom: 5rem;
+  }
+
+  /* ── Two-column layout ── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 5rem;
+    padding-top: 4rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Left column */
+  .contact-info-label {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 1.5rem;
+  }
+  .contact-info-text {
+    font-size: clamp(0.9rem, 1.2vw, 1rem);
+    line-height: 1.75;
+    color: var(--fg-muted);
+    font-weight: 300;
+    margin-bottom: 2.5rem;
+  }
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .contact-link:hover {
+    opacity: 1;
+  }
+  .contact-link svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  /* ── Form ── */
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .form-label {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+  .form-input,
+  .form-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 0;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--fg);
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: var(--fg-muted);
+    opacity: 0.5;
+  }
+  .form-input:focus,
+  .form-textarea:focus {
+    border-bottom-color: var(--fg);
+  }
+  .form-textarea {
+    min-height: 7rem;
+    padding-top: 0.5rem;
+  }
+
+  /* Field error */
+  .field-error {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--accent-red);
+    margin-top: 0.25rem;
+  }
+  .field-error svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+  }
+
+  /* Flash message */
+  .flash-msg {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+    padding: 0.7rem 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Submit button */
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--fg);
+    border: 1px solid var(--fg);
+    padding: 0.75rem 2rem;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s;
+    margin-top: 0.5rem;
+  }
+  .submit-btn:hover {
+    background: transparent;
+    color: var(--fg);
+  }
+  .submit-btn svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  @media (max-width: 700px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="contact-page">
+  <p class="page-eyebrow">Contact</p>
+  <h1 class="page-heading">Let's work<br />together.</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %} {% for _, message in messages %}
+  <div class="flash-msg">{{ message }}</div>
+  {% endfor %} {% endif %} {% endwith %}
+
+  <div class="contact-grid">
+    <!-- Left: info -->
+    <div>
+      <p class="contact-info-label">Get in touch</p>
+      <p class="contact-info-text">
+        Open to backend and full-stack roles, freelance projects, or just a
+        conversation. Fill in the form or reach out directly.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:emmanuelaklah54@gmail.com" class="contact-link">
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="m22 7-10 7L2 7" />
+          </svg>
+          emmanuelaklah54@gmail.com
+        </a>
+        <a
+          href="https://github.com/dashboard"
+          target="_blank"
+          rel="noopener"
+          class="contact-link"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+            />
+          </svg>
+          GitHub
+        </a>
+        <a
+          href="https://www.linkedin.com/in/emmanuel-aklah-b63a68230/"
+          target="_blank"
+          rel="noopener"
+          class="contact-link"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+            />
+            <rect x="2" y="9" width="4" height="12" />
+            <circle cx="4" cy="4" r="2" />
+          </svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+
+    <!-- Right: form -->
+    <form method="POST" class="contact-form">
+      {{ form.hidden_tag() }}
+
+      <div class="form-field">
+        {{ form.name.label(class="form-label") }} {{
+        form.name(class="form-input", placeholder="Your name") }} {% for error
+        in form.name.errors %}
+        <span class="field-error">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          {{ error }}
+        </span>
+        {% endfor %}
+      </div>
+
+      <div class="form-field">
+        {{ form.email.label(class="form-label") }} {{
+        form.email(class="form-input", placeholder="your@email.com") }} {% for
+        error in form.email.errors %}
+        <span class="field-error">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          {{ error }}
+        </span>
+        {% endfor %}
+      </div>
+
+      <div class="form-field">
+        {{ form.subject.label(class="form-label") }} {{
+        form.subject(class="form-input", placeholder="What's this about?") }} {%
+        for error in form.subject.errors %}
+        <span class="field-error">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          {{ error }}
+        </span>
+        {% endfor %}
+      </div>
+
+      <div class="form-field">
+        {{ form.message.label(class="form-label") }} {{
+        form.message(class="form-textarea", rows=5, placeholder="Your message…")
+        }} {% for error in form.message.errors %}
+        <span class="field-error">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          {{ error }}
+        </span>
+        {% endfor %}
+      </div>
+
+      <div>
+        <button type="submit" class="submit-btn">
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" />
+          </svg>
+          Send message
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

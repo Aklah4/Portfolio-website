@@ -1,0 +1,370 @@
+{% extends "base.html" %} {% block title %}Emmanuel Aklah — Backend Developer{%
+endblock %} {% block head %}
+<style>
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 2.5rem 2.5rem;
+    overflow: hidden;
+  }
+
+  /* Top spacer for fixed nav */
+  .hero-top {
+    height: 5.5rem;
+  }
+
+  /* Role label */
+  .hero-role {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 0.6rem;
+  }
+
+  /* Big name */
+  .hero-name {
+    font-family: "Barlow", sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--fg);
+    /* Scale to fill viewport width */
+    font-size: clamp(4rem, 12.5vw, 13rem);
+    white-space: nowrap;
+  }
+
+  /* Bottom row */
+  .hero-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 2.5rem;
+  }
+
+  .hero-bio {
+    font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+    line-height: 1.65;
+    color: var(--fg-muted);
+    max-width: 28ch;
+  }
+
+  /* Tags */
+  .hero-tags {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.55rem;
+  }
+  .hero-tag {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.35rem 0.95rem;
+    white-space: nowrap;
+    transition: border-color 0.2s;
+  }
+  .hero-tag:hover {
+    border-color: var(--fg);
+  }
+  .hero-tag.available {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .hero-tag.available::before {
+    content: "";
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(0.7);
+    }
+  }
+
+  /* Scroll indicator */
+  .scroll-indicator {
+    position: absolute;
+    right: 2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .scroll-indicator .scroll-line {
+    width: 1px;
+    height: 3.5rem;
+    background: var(--accent-red);
+  }
+  .scroll-indicator .scroll-text {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  /* ── Divider ── */
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 0 2.5rem;
+    width: calc(100% - 5rem);
+  }
+
+  /* ── Projects section ── */
+  .section {
+    padding: 5rem 2.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 2.5rem;
+  }
+  .project-row {
+    border-top: 1px solid var(--border);
+    padding: 1.75rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    cursor: default;
+    transition: padding-left 0.25s ease;
+  }
+  .project-row:hover {
+    padding-left: 0.75rem;
+  }
+  .project-row:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+  .project-title {
+    font-family: "Barlow", sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    line-height: 1;
+    color: var(--fg);
+    transition: color 0.2s;
+  }
+  .project-row:hover .project-title {
+    color: var(--fg-muted);
+  }
+  .project-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-shrink: 0;
+  }
+  .project-tag {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.28rem 0.75rem;
+  }
+  .project-arrow {
+    font-size: 1.25rem;
+    color: var(--fg-muted);
+    transition:
+      transform 0.2s,
+      color 0.2s;
+  }
+  .project-row:hover .project-arrow {
+    transform: translateX(6px);
+    color: var(--fg);
+  }
+
+  /* ── Skills section ── */
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .skill-chip {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    transition:
+      background 0.2s,
+      border-color 0.2s;
+    cursor: default;
+  }
+  .skill-chip:hover {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+
+  /* Entrance animations */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.65s ease,
+      transform 0.65s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+{% endblock %} {% block content %}
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-top"></div>
+
+  <div>
+    <p class="hero-role">Backend Developer</p>
+    <h1 class="hero-name">Emmanuel<br />Aklah</h1>
+  </div>
+
+  <div class="hero-bottom">
+    <p class="hero-bio">
+      Building robust, scalable backends.<br />
+      Flask, Python, MySQL, PostgreSQL, Jinja2 &amp; MongoDB.<br />
+      Open to new opportunities.
+    </p>
+
+    <div class="hero-tags">
+      <span class="hero-tag available">Available for work</span>
+      <span class="hero-tag">Winnipeg, Manitoba</span>
+      <span class="hero-tag"
+        >Flask &middot; Python &middot; Jinja2 &middot; MySQL &middot;
+        PostgreSQL &middot; MongoDB</span
+      >
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator" aria-hidden="true">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── PROJECTS ── -->
+<section class="section fade-up">
+  <p class="section-label">Selected Work</p>
+
+  {% if projects %} {% for project in projects %}
+  <a
+    href="{{ url_for('main.projects') }}"
+    style="text-decoration: none; display: block"
+  >
+    <div class="project-row">
+      <span class="project-title">{{ project.title }}</span>
+      <div class="project-meta">
+        <span class="project-tag">{{ project.tech or 'Flask' }}</span>
+        <span class="project-arrow">&rarr;</span>
+      </div>
+    </div>
+  </a>
+  {% endfor %} {% else %}
+  <div class="project-row">
+    <span class="project-title">Portfolio CMS</span>
+    <div class="project-meta">
+      <span class="project-tag"
+        >Flask &middot; Python &middot; Jinja2 &middot; MySQL &middot;
+        PostgreSQL &middot; MongoDB</span
+      >
+      <span class="project-arrow">&rarr;</span>
+    </div>
+  </div>
+  <div class="project-row">
+    <span class="project-title">REST API Service</span>
+    <div class="project-meta">
+      <span class="project-tag">Python &middot; REST</span>
+      <span class="project-arrow">&rarr;</span>
+    </div>
+  </div>
+  <div class="project-row">
+    <span class="project-title">More on projects page</span>
+    <div class="project-meta">
+      <a
+        href="{{ url_for('main.projects') }}"
+        class="project-tag"
+        style="color: var(--fg)"
+        >View all &rarr;</a
+      >
+    </div>
+  </div>
+  {% endif %}
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── SKILLS ── -->
+<section class="section fade-up">
+  <p class="section-label">Skills &amp; Stack</p>
+  <div class="skills-grid">
+    {% for skill in ['Flask', 'Python', 'MySQL', 'MongoDB', 'REST API', 'JWT
+    Auth', 'Docker', 'Git', 'Linux', 'HTML/CSS'] %}
+    <span class="skill-chip">{{ skill }}</span>
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+  // Intersection observer for fade-up sections
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) e.target.classList.add("visible");
+      });
+    },
+    { threshold: 0.12 },
+  );
+  document.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+</script>
+
+{% endblock %}

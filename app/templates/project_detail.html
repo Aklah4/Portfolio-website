@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} — Emmanuel Aklah{% endblock %}
+
+{% block head %}
+<style>
+  .detail-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 9rem 2.5rem 6rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    text-decoration: none;
+    margin-bottom: 3rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--fg); }
+
+  .page-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 1rem;
+  }
+  .page-heading {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(2.5rem, 7vw, 6rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--fg);
+    margin-bottom: 4rem;
+  }
+
+  .detail-body {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 4rem;
+    padding: 4rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .detail-description {
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    line-height: 1.8;
+    color: var(--fg);
+    font-weight: 300;
+  }
+
+  .detail-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .sidebar-section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 1rem;
+  }
+
+  .card-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .stack-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    background: transparent;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .btn:hover {
+    background: color-mix(in srgb, var(--fg) 6%, var(--bg));
+    border-color: var(--fg-muted);
+  }
+  .btn-arrow {
+    font-size: 1rem;
+    transition: transform 0.2s;
+  }
+  .btn:hover .btn-arrow { transform: translate(2px, -2px); }
+
+  .project-image {
+    margin-bottom: 4rem;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .project-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 700px) {
+    .detail-body {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+
+  <a href="{{ url_for('main.projects') }}" class="back-link">&#8592; Back to Work</a>
+
+  <p class="page-eyebrow">Project</p>
+  <h1 class="page-heading">{{ project.title }}</h1>
+
+  {% if project.image_url %}
+  <div class="project-image fade-up">
+    <img src="{{ project.image_url }}" alt="{{ project.title }} preview">
+  </div>
+  {% endif %}
+
+  <div class="detail-body fade-up">
+
+    <p class="detail-description">{{ project.description }}</p>
+
+    <div class="detail-sidebar">
+
+      {% if project.tech_stack %}
+      <div>
+        <p class="sidebar-section-label">Tech Stack</p>
+        <div class="card-stack">
+          {% for tech in project.tech_stack %}
+          <span class="stack-tag">{{ tech }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if project.live_url or project.github_url %}
+      <div>
+        <p class="sidebar-section-label">Links</p>
+        <div class="action-buttons">
+          {% if project.live_url %}
+          <a href="{{ project.live_url }}" target="_blank" rel="noopener noreferrer" class="btn">
+            View Live <span class="btn-arrow">&#8599;</span>
+          </a>
+          {% endif %}
+          {% if project.github_url %}
+          <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="btn">
+            View on GitHub <span class="btn-arrow">&#8599;</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const obs = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.08 }
+  );
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+{% endblock %}

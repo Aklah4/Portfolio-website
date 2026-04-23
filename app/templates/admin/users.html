@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Contacts — Admin{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold text-gray-800 mb-6">Contact Submissions</h1>
+
+<div class="bg-white rounded-xl shadow overflow-hidden">
+  <table class="w-full text-sm text-left">
+    <thead class="bg-gray-900 text-white">
+      <tr>
+        <th class="px-5 py-3 font-semibold uppercase tracking-wide">Name</th>
+        <th class="px-5 py-3 font-semibold uppercase tracking-wide">Email</th>
+        <th class="px-5 py-3 font-semibold uppercase tracking-wide">Subject</th>
+        <th class="px-5 py-3 font-semibold uppercase tracking-wide">Message</th>
+        <th class="px-5 py-3 font-semibold uppercase tracking-wide">Date</th>
+        <th class="px-5 py-3 font-semibold uppercase tracking-wide text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for contact in contacts %}
+      <tr class="hover:bg-gray-50 transition-colors">
+        <td class="px-5 py-4 text-gray-800">{{ contact.name }}</td>
+        <td class="px-5 py-4 text-gray-600">{{ contact.email }}</td>
+        <td class="px-5 py-4 text-gray-600 max-w-xs truncate">{{ contact.subject }}</td>
+        <td class="px-5 py-4 text-gray-600 max-w-xs truncate">{{ contact.message }}</td>
+        <td class="px-5 py-4 text-gray-500 whitespace-nowrap">{{ contact.submitted_at.strftime('%Y-%m-%d') }}</td>
+        <td class="px-5 py-4 text-right">
+          <div class="flex items-center justify-end gap-2">
+            <a href="{{ url_for('admin.update', id=contact.id) }}"
+               class="bg-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded hover:bg-gray-600 transition-colors">
+              Edit
+            </a>
+            <form action="{{ url_for('admin.delete', id=contact.id) }}" method="POST"
+                  onsubmit="return confirm('Delete this contact?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit"
+                      class="bg-red-600 text-white text-xs font-medium px-3 py-1.5 rounded hover:bg-red-500 transition-colors">
+                Delete
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="px-5 py-12 text-center text-gray-400">No contacts yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}500 — Emmanuel Aklah{% endblock %}
+
+{% block head %}
+<style>
+  .error-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 9rem 2.5rem 6rem;
+  }
+  .page-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 1rem;
+  }
+  .error-code {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(6rem, 20vw, 14rem);
+    line-height: 0.88;
+    letter-spacing: -0.04em;
+    color: var(--fg);
+    margin-bottom: 1.5rem;
+  }
+  .error-sub {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    color: var(--fg-muted);
+    margin-bottom: 3.5rem;
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--fg);
+    border: 1px solid var(--fg);
+    padding: 0.75rem 2rem;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .back-btn:hover {
+    background: transparent;
+    color: var(--fg);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-page">
+  <p class="page-eyebrow">Error</p>
+  <p class="error-code">500</p>
+  <p class="error-sub">Something went wrong.</p>
+  <a href="{{ url_for('main.index') }}" class="back-btn">&#8592; Back to home</a>
+</div>
+{% endblock %}

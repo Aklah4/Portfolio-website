@@ -1,0 +1,135 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ "Edit" if project else "New" }} Project — Admin{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{{ url_for('admin.projects_list') }}" class="text-gray-400 hover:text-gray-700 transition-colors text-sm">
+      ← Projects
+    </a>
+    <span class="text-gray-300">/</span>
+    <h1 class="text-2xl font-bold text-gray-800">{{ "Edit Project" if project else "New Project" }}</h1>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mb-4 space-y-2">
+        {% for category, message in messages %}
+        <div class="px-4 py-2 rounded-lg text-sm
+          {% if category == 'success' %}bg-green-100 text-green-700
+          {% elif category == 'danger' %}bg-red-100 text-red-700
+          {% else %}bg-blue-100 text-blue-700{% endif %}">
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="bg-white rounded-xl shadow p-8">
+    <form method="POST" action="{{ action_url }}" enctype="multipart/form-data" class="space-y-5">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+        <input type="text" name="title" id="title" required
+               value="{{ project.title if project else '' }}"
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Slug
+          <span class="text-gray-400 font-normal ml-1">(auto-generated from title if left blank)</span>
+        </label>
+        <input type="text" name="slug" id="slug"
+               value="{{ project.slug if project else '' }}"
+               placeholder="e.g. flask-rest-api"
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gray-800">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+        <textarea name="description" rows="3"
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800 resize-none">{{ project.description if project else '' }}</textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Tech Stack
+          <span class="text-gray-400 font-normal ml-1">(comma-separated)</span>
+        </label>
+        <input type="text" name="tech_stack"
+               value="{{ project.tech_stack | join(', ') if project and project.tech_stack else '' }}"
+               placeholder="Flask, PostgreSQL, Docker"
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Live URL</label>
+        <input type="url" name="live_url"
+               value="{{ project.live_url if project else '' }}"
+               placeholder="https://"
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">GitHub URL</label>
+        <input type="url" name="github_url"
+               value="{{ project.github_url if project else '' }}"
+               placeholder="https://github.com/..."
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Project Image</label>
+        {% if project and project.image_url %}
+        <div class="mb-2">
+          <img src="{{ project.image_url }}" alt="Current image"
+               class="h-28 w-auto rounded border border-gray-200 object-cover">
+          <p class="text-xs text-gray-400 mt-1">Upload a new file to replace this image.</p>
+        </div>
+        {% endif %}
+        <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp"
+               class="w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-gray-900 file:text-white hover:file:bg-gray-700 cursor-pointer">
+        <p class="text-xs text-gray-400 mt-1">JPG, PNG, GIF or WebP — max 5 MB.</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <input type="checkbox" name="featured" id="featured" value="1"
+               {{ 'checked' if project and project.featured else '' }}
+               class="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-800">
+        <label for="featured" class="text-sm font-medium text-gray-700">Featured project</label>
+      </div>
+
+      <div class="flex items-center gap-3 pt-2">
+        <button type="submit"
+                class="bg-gray-900 text-white text-sm font-semibold px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+          {{ "Save Changes" if project else "Create Project" }}
+        </button>
+        <a href="{{ url_for('admin.projects_list') }}"
+           class="text-sm text-gray-500 hover:text-gray-700 transition-colors">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const titleInput = document.getElementById('title');
+  const slugInput = document.getElementById('slug');
+  let slugEdited = slugInput.value.length > 0;
+
+  slugInput.addEventListener('input', () => { slugEdited = true; });
+
+  titleInput.addEventListener('input', () => {
+    if (slugEdited) return;
+    slugInput.value = titleInput.value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% set skills = [ { "name": "Flask", "category": "Framework" },
+{ "name": "Python", "category": "Language" }, { "name": "MySQL", "category":
+"Database" }, { "name": "PostgreSQL", "category": "Database" }, { "name":
+"MongoDB", "category": "Database" }, { "name": "REST API", "category":
+"Architecture" }, { "name": "JWT Auth", "category": "Security" }, { "name":
+"Jinja2", "category": "Templating" }, { "name": "Docker", "category": "DevOps"
+}, { "name": "Git", "category": "Tooling" }, { "name": "Linux", "category":
+"Tooling" }, { "name": "HTML / CSS", "category": "Frontend" }, ] %}
+
+{% block title %}About — Emmanuel Aklah{% endblock %}
+
+{% block head %}
+<style>
+  /* ── Page layout ── */
+  .about-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 9rem 2.5rem 6rem;
+  }
+
+  /* ── Page header ── */
+  .page-eyebrow {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 1rem;
+  }
+  .page-heading {
+    font-family: "Barlow", sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--fg);
+    margin-bottom: 5rem;
+  }
+
+  /* ── Two-column bio ── */
+  .bio-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    padding: 4rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 5rem;
+  }
+  .bio-label {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    padding-top: 0.25rem;
+  }
+  .bio-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .bio-body p {
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    line-height: 1.75;
+    color: var(--fg);
+    font-weight: 300;
+  }
+  .bio-body p strong {
+    font-weight: 600;
+    color: var(--fg);
+  }
+
+  /* ── Skills grid ── */
+  .skills-section-label {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 2rem;
+  }
+  .skills-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .skill-card {
+    background: var(--bg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    transition: background 0.2s;
+    cursor: default;
+  }
+  .skill-card:hover {
+    background: color-mix(in srgb, var(--fg) 6%, var(--bg));
+  }
+  .skill-card-name {
+    font-family: "Barlow", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--fg);
+    line-height: 1;
+  }
+  .skill-card-cat {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  /* Entrance */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 640px) {
+    .bio-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .skills-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="about-page">
+  <!-- Header -->
+  <p class="page-eyebrow">About</p>
+  <h1 class="page-heading">The person<br />behind the code.</h1>
+
+  <!-- Bio -->
+  <div class="bio-grid fade-up">
+    <span class="bio-label">Background</span>
+    <div class="bio-body">
+      <p>
+        I'm <strong>Emmanuel Aklah</strong>, a backend developer based in
+        Winnipeg, Manitoba. I specialise in building clean, well-structured
+        server-side applications using <strong>Flask</strong> and
+        <strong>Python</strong>, backed by relational and document databases.
+      </p>
+      <p>
+        My work spans REST API design, authentication systems, database
+        modelling, and full request-response cycles rendered with
+        <strong>Jinja2</strong>. I care about code that is readable,
+        maintainable, and does exactly what it promises.
+      </p>
+      <p>
+        Currently open to backend or full-stack roles where I can keep building
+        things that matter.
+      </p>
+    </div>
+  </div>
+
+  <!-- Skills -->
+  <div class="fade-up">
+    <p class="skills-section-label">Skills &amp; Stack</p>
+    <div class="skills-cards">
+      {% for skill in skills %}
+      <div class="skill-card">
+        <span class="skill-card-name">{{ skill.name }}</span>
+        <span class="skill-card-cat">{{ skill.category }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  const obs = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((e) => {
+        if (e.isIntersecting) e.target.classList.add("visible");
+      }),
+    { threshold: 0.1 },
+  );
+  document.querySelectorAll(".fade-up").forEach((el) => obs.observe(el));
+</script>
+{% endblock %}

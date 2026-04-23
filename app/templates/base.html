@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Emmanuel Aklah{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,600;0,700;0,900;1,900&family=Barlow+Condensed:wght@500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+      :root {
+        --bg: #ffffff;
+        --fg: #0f172a;
+        --fg-muted: #64748b;
+        --border: #e2e8f0;
+        --accent-red: #e63030;
+        --accent-green: #3dbe6c;
+      }
+      [data-theme="dark"] {
+        --bg: #0d0d0d;
+        --fg: #ede8df;
+        --fg-muted: #8a8680;
+        --border: rgba(237,232,223,0.12);
+      }
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+        transition: background 0.35s ease, color 0.35s ease;
+        overflow-x: hidden;
+      }
+
+      /* ── Navbar ── */
+      .site-nav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem 2.5rem;
+        transition: background 0.35s ease, backdrop-filter 0.35s ease;
+      }
+      .site-nav.nav-scrolled {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border);
+      }
+      [data-theme="dark"] .site-nav.nav-scrolled {
+        background: rgba(13, 13, 13, 0.88);
+      }
+
+      .nav-logo {
+        font-family: 'Barlow', sans-serif;
+        font-weight: 800;
+        font-size: 1.05rem;
+        color: var(--fg);
+        text-decoration: none;
+        letter-spacing: -0.02em;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+        list-style: none;
+      }
+      .nav-links a {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 500;
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--fg);
+        text-decoration: none;
+        opacity: 0.75;
+        transition: opacity 0.2s;
+      }
+      .nav-links a:hover { opacity: 1; }
+
+      .theme-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 500;
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--fg);
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 0.4rem 0.9rem;
+        cursor: pointer;
+        transition: border-color 0.2s, background 0.2s;
+      }
+      .theme-toggle:hover { background: var(--border); }
+      .theme-toggle svg { width: 14px; height: 14px; }
+
+      /* ── Main content ── */
+      main { min-height: 100vh; }
+
+      /* ── Footer ── */
+      .site-footer {
+        padding: 2rem 2.5rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .site-footer p {
+        font-size: 0.8rem;
+        color: var(--fg-muted);
+        letter-spacing: 0.04em;
+      }
+    </style>
+    {% block head %}{% endblock %}
+    <!-- Apply saved theme before first paint to prevent flash -->
+    <script>
+      (function () {
+        var t = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
+  </head>
+  <body>
+
+    <nav class="site-nav" id="site-nav">
+      <a href="{{ url_for('main.index') }}" class="nav-logo">ea</a>
+      <ul class="nav-links">
+        <li><a href="{{ url_for('main.projects') }}">Work</a></li>
+        <li><a href="{{ url_for('main.about') }}">About</a></li>
+        <li><a href="{{ url_for('main.contact') }}">Contact</a></li>
+        <li>
+          <button class="theme-toggle" id="theme-btn" aria-label="Toggle theme">
+            <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <span id="theme-label">Dark</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <main>{% block content %}{% endblock %}</main>
+
+    <footer class="site-footer">
+      <p>&copy; 2026 Emmanuel Aklah</p>
+      <p>Backend Developer</p>
+    </footer>
+
+    <script>
+      const root = document.documentElement;
+      const btn  = document.getElementById('theme-btn');
+      const label = document.getElementById('theme-label');
+      const icon  = document.getElementById('theme-icon');
+
+      const sunSVG  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+      const moonSVG = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        const isDark = theme === 'dark';
+        label.textContent = isDark ? 'Light' : 'Dark';
+        icon.innerHTML    = isDark ? sunSVG : moonSVG;
+      }
+
+      // Sync button state with whatever the <head> script already set
+      applyTheme(root.getAttribute('data-theme') || 'light');
+
+      btn.addEventListener('click', () => {
+        applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+
+      // Sticky nav on scroll
+      const nav = document.getElementById('site-nav');
+      window.addEventListener('scroll', () => {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 30);
+      }, { passive: true });
+    </script>
+
+  </body>
+</html>
