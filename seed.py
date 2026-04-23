@@ -1,3 +1,6 @@
+import os
+from dotenv import load_dotenv
+load_dotenv(override=True)
 from app import create_app
 from app.db import db
 from app.models import AdminUser
@@ -9,7 +12,7 @@ with app.app_context():
 
     if not AdminUser.query.filter_by(username="admin").first():
         admin = AdminUser(username="admin", email="admin@example.com")
-        admin.set_password("changeme123")
+        admin.set_password(os.environ["ADMIN_PASSWORD"])
         db.session.add(admin)
         db.session.commit()
         print("Admin user created.")
