@@ -120,6 +120,80 @@
         color: var(--fg-muted);
         letter-spacing: 0.04em;
       }
+
+      /* ── Hamburger (mobile only) ── */
+      .nav-hamburger {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 0.45rem 0.5rem;
+        cursor: pointer;
+      }
+      .nav-hamburger span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: var(--fg);
+        border-radius: 2px;
+        transition: transform 0.25s ease, opacity 0.25s ease;
+      }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      /* ── Mobile nav overlay ── */
+      .mobile-nav {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 99;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 2rem;
+      }
+      .mobile-nav.open { display: flex; }
+      .mobile-nav-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+      }
+      .mobile-nav-list a {
+        font-family: 'Barlow', sans-serif;
+        font-weight: 900;
+        font-style: italic;
+        font-size: clamp(2.8rem, 14vw, 5rem);
+        line-height: 1.05;
+        color: var(--fg);
+        text-decoration: none;
+        transition: opacity 0.2s;
+      }
+      .mobile-nav-list a:hover { opacity: 0.5; }
+      .mobile-nav-footer {
+        margin-top: 3rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      @media (max-width: 640px) {
+        .site-nav { padding: 1.1rem 1.25rem; }
+        .nav-links { display: none; }
+        .nav-hamburger { display: flex; }
+        .site-footer {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.4rem;
+          padding: 1.5rem 1.25rem;
+        }
+      }
     </style>
     {% block head %}{% endblock %}
     <!-- Apply saved theme before first paint to prevent flash -->
@@ -147,7 +221,27 @@
           </button>
         </li>
       </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </nav>
+
+    <!-- Mobile nav overlay -->
+    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+      <ul class="mobile-nav-list">
+        <li><a href="{{ url_for('main.projects') }}" class="mobile-nav-link">Work</a></li>
+        <li><a href="{{ url_for('main.about') }}" class="mobile-nav-link">About</a></li>
+        <li><a href="{{ url_for('main.contact') }}" class="mobile-nav-link">Contact</a></li>
+      </ul>
+      <div class="mobile-nav-footer">
+        <button class="theme-toggle" id="theme-btn-mobile" aria-label="Toggle theme">
+          <svg id="theme-icon-mobile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <span id="theme-label-mobile">Dark</span>
+        </button>
+      </div>
+    </div>
 
     <main>{% block content %}{% endblock %}</main>
 
@@ -157,10 +251,13 @@
     </footer>
 
     <script>
-      const root = document.documentElement;
-      const btn  = document.getElementById('theme-btn');
+      const root  = document.documentElement;
+      const btn   = document.getElementById('theme-btn');
+      const btnM  = document.getElementById('theme-btn-mobile');
       const label = document.getElementById('theme-label');
+      const labelM = document.getElementById('theme-label-mobile');
       const icon  = document.getElementById('theme-icon');
+      const iconM = document.getElementById('theme-icon-mobile');
 
       const sunSVG  = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
       const moonSVG = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
@@ -169,16 +266,44 @@
         root.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
         const isDark = theme === 'dark';
-        label.textContent = isDark ? 'Light' : 'Dark';
-        icon.innerHTML    = isDark ? sunSVG : moonSVG;
+        const txt = isDark ? 'Light' : 'Dark';
+        const svg = isDark ? sunSVG : moonSVG;
+        label.textContent  = txt;  icon.innerHTML  = svg;
+        labelM.textContent = txt;  iconM.innerHTML = svg;
       }
 
-      // Sync button state with whatever the <head> script already set
       applyTheme(root.getAttribute('data-theme') || 'light');
 
       btn.addEventListener('click', () => {
         applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
       });
+      btnM.addEventListener('click', () => {
+        applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+
+      // Hamburger / mobile nav
+      const hamburger = document.getElementById('nav-hamburger');
+      const mobileNav = document.getElementById('mobile-nav');
+
+      function closeMobileNav() {
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        mobileNav.classList.remove('open');
+        mobileNav.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      hamburger.addEventListener('click', () => {
+        const opening = !hamburger.classList.contains('open');
+        hamburger.classList.toggle('open', opening);
+        hamburger.setAttribute('aria-expanded', String(opening));
+        mobileNav.classList.toggle('open', opening);
+        mobileNav.setAttribute('aria-hidden', String(!opening));
+        document.body.style.overflow = opening ? 'hidden' : '';
+      });
+
+      // Close mobile nav when a link is clicked
+      mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
 
       // Sticky nav on scroll
       const nav = document.getElementById('site-nav');
