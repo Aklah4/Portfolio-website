@@ -5,7 +5,8 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or "dev-secret-key-change-in-production"
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL") or "sqlite:///app.db"
+    _db_url = os.environ.get("DATABASE_URL") or "sqlite:///app.db"
+    SQLALCHEMY_DATABASE_URI = _db_url.replace("postgres://", "postgresql://", 1)
     MONGO_URI = os.environ.get("MONGO_URI")
     CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
     WTF_CSRF_ENABLED = True
