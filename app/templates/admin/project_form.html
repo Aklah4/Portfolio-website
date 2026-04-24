@@ -27,7 +27,7 @@
     {% endif %}
   {% endwith %}
 
-  <div class="bg-white rounded-xl shadow p-8">
+  <div class="bg-white rounded-xl shadow p-4 sm:p-8">
     <form method="POST" action="{{ action_url }}" enctype="multipart/form-data" class="space-y-5">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 

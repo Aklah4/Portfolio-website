@@ -15,18 +15,49 @@
 <body class="bg-gray-100 min-h-screen">
 
   {% if current_user.is_authenticated %}
-  <nav class="bg-gray-900 text-white px-6 py-4 flex items-center gap-6">
+  <nav class="bg-gray-900 text-white px-4 sm:px-6 py-3 sm:py-4 flex items-center">
     <span class="font-semibold text-lg mr-auto">Admin Panel</span>
-    <a href="{{ url_for('admin.dashboard') }}" class="hover:text-gray-300 transition-colors">Dashboard</a>
-    <a href="{{ url_for('admin.projects_list') }}" class="hover:text-gray-300 transition-colors">Projects</a>
-    <a href="{{ url_for('admin.read') }}" class="hover:text-gray-300 transition-colors">Contacts</a>
-    <a href="{{ url_for('admin.logout') }}" class="hover:text-gray-300 transition-colors">Logout</a>
+
+    <!-- Desktop links -->
+    <div class="hidden sm:flex items-center gap-6">
+      <a href="{{ url_for('admin.dashboard') }}" class="hover:text-gray-300 transition-colors text-sm">Dashboard</a>
+      <a href="{{ url_for('admin.projects_list') }}" class="hover:text-gray-300 transition-colors text-sm">Projects</a>
+      <a href="{{ url_for('admin.read') }}" class="hover:text-gray-300 transition-colors text-sm">Contacts</a>
+      <a href="{{ url_for('admin.logout') }}" class="hover:text-gray-300 transition-colors text-sm">Logout</a>
+    </div>
+
+    <!-- Mobile hamburger -->
+    <button id="admin-menu-btn" class="sm:hidden flex flex-col gap-1.5 p-1 ml-2" aria-label="Open menu">
+      <span class="block w-5 h-0.5 bg-white rounded transition-all"></span>
+      <span class="block w-5 h-0.5 bg-white rounded transition-all"></span>
+      <span class="block w-5 h-0.5 bg-white rounded transition-all"></span>
+    </button>
   </nav>
+
+  <!-- Mobile dropdown -->
+  <div id="admin-mobile-menu" class="hidden bg-gray-800 text-white sm:hidden">
+    <div class="flex flex-col px-4 py-3 gap-1">
+      <a href="{{ url_for('admin.dashboard') }}" class="py-2 text-sm hover:text-gray-300 transition-colors border-b border-gray-700">Dashboard</a>
+      <a href="{{ url_for('admin.projects_list') }}" class="py-2 text-sm hover:text-gray-300 transition-colors border-b border-gray-700">Projects</a>
+      <a href="{{ url_for('admin.read') }}" class="py-2 text-sm hover:text-gray-300 transition-colors border-b border-gray-700">Contacts</a>
+      <a href="{{ url_for('admin.logout') }}" class="py-2 text-sm hover:text-gray-300 transition-colors">Logout</a>
+    </div>
+  </div>
   {% endif %}
 
-  <main class="p-6">
+  <main class="p-4 sm:p-6">
     {% block content %}{% endblock %}
   </main>
+
+  <script>
+    var menuBtn = document.getElementById('admin-menu-btn');
+    var mobileMenu = document.getElementById('admin-mobile-menu');
+    if (menuBtn) {
+      menuBtn.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+    }
+  </script>
 
 </body>
 </html>
