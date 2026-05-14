@@ -1,13 +1,13 @@
 import os
-from flask import render_template, request, redirect, url_for, flash, current_app
+from datetime import datetime, timezone
+from bson import ObjectId
+from flask import render_template, request, redirect, url_for, flash, current_app, abort
 from werkzeug.utils import secure_filename
 import cloudinary
 import cloudinary.uploader
 from . import admin_bp
-from app.db import db
-from app.models import Contact
-from flask_login import login_required, login_user, logout_user, current_user
 from app.models import AdminUser
+from flask_login import login_required, login_user, logout_user, current_user
 from slugify import slugify
 from app.mongo_helpers import (
     get_all_projects, get_project_by_slug,
@@ -55,11 +55,10 @@ def logout():
     return redirect(url_for("admin.login"))
 
 
-
 @admin_bp.route("/dashboard")
 @login_required
 def dashboard():
-    count = Contact.query.count()
+    count = current_app.mongo["contacts"].count_documents({})
     project_count = len(get_all_projects())
     return render_template("admin/dashboard.html", count=count, project_count=project_count)
 
@@ -67,33 +66,35 @@ def dashboard():
 @admin_bp.route('/users', methods=['GET'])
 @login_required
 def read():
-    # Renamed variable to 'contacts' for clarity in your template
-    contacts = Contact.query.all()
+    contacts = list(current_app.mongo["contacts"].find().sort("submitted_at", -1))
     return render_template('admin/users.html', contacts=contacts)
 
-@admin_bp.route('/update/<int:id>', methods=['GET', 'POST'])
+@admin_bp.route('/update/<string:id>', methods=['GET', 'POST'])
 @login_required
 def update(id):
-    contact = db.get_or_404(Contact, id)
+    contact = current_app.mongo["contacts"].find_one({"_id": ObjectId(id)})
+    if contact is None:
+        abort(404)
 
     if request.method == 'POST':
-        contact.name = request.form.get('name')
-        contact.email = request.form.get('email')
-        contact.subject = request.form.get('subject')
-        contact.message = request.form.get('message')
-
-        db.session.commit()
+        current_app.mongo["contacts"].update_one(
+            {"_id": ObjectId(id)},
+            {"$set": {
+                "name": request.form.get("name"),
+                "email": request.form.get("email"),
+                "subject": request.form.get("subject"),
+                "message": request.form.get("message"),
+            }}
+        )
         flash("Contact updated!", "info")
         return redirect(url_for('admin.read'))
 
     return render_template('admin/edit.html', user=contact)
 
-@admin_bp.route('/delete/<int:id>', methods=['POST'])
+@admin_bp.route('/delete/<string:id>', methods=['POST'])
 @login_required
 def delete(id):
-    contact = db.get_or_404(Contact, id)
-    db.session.delete(contact)
-    db.session.commit()
+    current_app.mongo["contacts"].delete_one({"_id": ObjectId(id)})
     flash("Contact deleted.", "danger")
     return redirect(url_for('admin.read'))
 

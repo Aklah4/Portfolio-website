@@ -28,11 +28,11 @@
         <td class="px-5 py-4 text-gray-500 whitespace-nowrap">{{ contact.submitted_at.strftime('%Y-%m-%d') }}</td>
         <td class="px-5 py-4 text-right">
           <div class="flex items-center justify-end gap-2">
-            <a href="{{ url_for('admin.update', id=contact.id) }}"
+            <a href="{{ url_for('admin.update', id=contact._id) }}"
                class="bg-gray-800 text-white text-xs font-medium px-3 py-1.5 rounded hover:bg-gray-600 transition-colors">
               Edit
             </a>
-            <form action="{{ url_for('admin.delete', id=contact.id) }}" method="POST"
+            <form action="{{ url_for('admin.delete', id=contact._id) }}" method="POST"
                   onsubmit="return confirm('Delete this contact?');">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button type="submit"
