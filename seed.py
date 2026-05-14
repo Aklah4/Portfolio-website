@@ -1,20 +1,21 @@
 import os
 from dotenv import load_dotenv
 load_dotenv(override=True)
+from datetime import datetime, timezone
+from werkzeug.security import generate_password_hash
 from app import create_app
-from app.db import db
-from app.models import AdminUser
 
 app = create_app()
 
 with app.app_context():
-    db.create_all()
-
-    if not AdminUser.query.filter_by(username="admin").first():
-        admin = AdminUser(username="admin", email="admin@example.com")
-        admin.set_password(os.environ["ADMIN_PASSWORD"])
-        db.session.add(admin)
-        db.session.commit()
+    admin_col = app.mongo["admin_users"]
+    if not admin_col.find_one({"username": "admin"}):
+        admin_col.insert_one({
+            "username": "admin",
+            "email": "admin@example.com",
+            "password_hash": generate_password_hash(os.environ["ADMIN_PASSWORD"]),
+            "created_at": datetime.now(timezone.utc),
+        })
         print("Admin user created.")
     else:
         print("Admin user already exists, skipping.")

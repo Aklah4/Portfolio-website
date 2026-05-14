@@ -6,14 +6,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.db import db, login_manager
 
 
-class AdminUser(UserMixin, db.Model):
-    __tablename__ = "admin_users"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
-    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
-    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
+class AdminUser(UserMixin):
+    def __init__(self, doc):
+        self.id = str(doc["_id"])
+        self.username = doc["username"]
+        self.email = doc["email"]
+        self.password_hash = doc["password_hash"]
 
     def set_password(self, password: str):
         self.password_hash = generate_password_hash(password)
@@ -23,8 +21,16 @@ class AdminUser(UserMixin, db.Model):
 
 
 @login_manager.user_loader
-def load_user(id):
-    return db.session.get(AdminUser, int(id))
+def load_user(user_id):
+    from flask import current_app
+    from bson import ObjectId
+    try:
+        doc = current_app.mongo["admin_users"].find_one({"_id": ObjectId(user_id)})
+        if doc:
+            return AdminUser(doc)
+    except Exception:
+        pass
+    return None
 
 
 class Contact(db.Model):

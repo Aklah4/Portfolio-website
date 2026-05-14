@@ -37,7 +37,8 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        user = AdminUser.query.filter_by(username=username).first()
+        doc = current_app.mongo["admin_users"].find_one({"username": username})
+        user = AdminUser(doc) if doc else None
         if user and user.check_password(password):
             login_user(user)
             flash("Logged in successfully!", "success")
