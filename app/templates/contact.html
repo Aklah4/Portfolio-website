@@ -156,6 +156,10 @@
     padding: 0.7rem 1.1rem;
     margin-bottom: 2rem;
   }
+  .flash-msg.flash-error {
+    color: var(--accent-red);
+    border-color: var(--accent-red);
+  }
 
   /* Submit button */
   .submit-btn {
@@ -204,8 +208,8 @@
   <h1 class="page-heading">Let's work<br />together.</h1>
 
   {% with messages = get_flashed_messages(with_categories=true) %} {% if
-  messages %} {% for _, message in messages %}
-  <div class="flash-msg">{{ message }}</div>
+  messages %} {% for category, message in messages %}
+  <div class="flash-msg{% if category == 'error' %} flash-error{% endif %}">{{ message }}</div>
   {% endfor %} {% endif %} {% endwith %}
 
   <div class="contact-grid">

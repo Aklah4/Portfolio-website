@@ -18,15 +18,22 @@ def about():
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        current_app.mongo["contacts"].insert_one({
-            "name": form.name.data,
-            "email": form.email.data,
-            "subject": form.subject.data,
-            "message": form.message.data,
-            "submitted_at": datetime.now(timezone.utc),
-        })
-        flash("Your message has been sent!", "success")
-        return redirect(url_for("main.contact"))
+        if current_app.mongo is None:
+            flash("Sorry, we couldn't send your message. Please try again later.", "error")
+            return render_template("contact.html", form=form)
+        try:
+            current_app.mongo["contacts"].insert_one({
+                "name": form.name.data,
+                "email": form.email.data,
+                "subject": form.subject.data,
+                "message": form.message.data,
+                "submitted_at": datetime.now(timezone.utc),
+            })
+            flash("Your message has been sent!", "success")
+            return redirect(url_for("main.contact"))
+        except Exception:
+            current_app.logger.exception("Failed to save contact form submission")
+            flash("Sorry, we couldn't send your message. Please try again later.", "error")
     return render_template("contact.html", form=form)
 
 @main_bp.route("/projects")
